@@ -152,7 +152,7 @@ class EdgeEnv(gym.Env):
         self.df_nodes = df_nodes
         self.current_task = df_tasks.iloc[0]
         # make time constraints relative
-        self.df_tasks_relative = self.df_tasks.iloc[0:self.max_steps+1].copy()
+        self.df_tasks_relative = self.df_tasks.iloc[0:self.max_steps + 1].copy()
         self.df_tasks_relative["relative_start_time"] = (
                 self.df_tasks_relative['start_time'] -
                 self.df_tasks_relative['arrive_time'].astype(int))
@@ -355,13 +355,13 @@ class EdgeEnv(gym.Env):
         # update the global observation (state)
         self.state = []  # observation is a list of ndarrays
         # a list in case different nodes have different rewards
-        self.rewards = []
         self.current_task_id += 1
         # reward is the penalty of the value lost
-        self.rewards.append(sw_increase - self.current_task_value)
+        self.rewards = np.full((self.n_nodes,),
+            sw_increase - self.current_task_value)
         # find if this is the last task of the episode
         if self.current_task_id >= self.max_steps:
-            done.append(True)
+            done = np.full((self.n_nodes,), True)
             # no new observation at the end of the the episode
             task_info = self.df_tasks_normalised.iloc[
                 self.current_task_id].to_numpy()
@@ -372,7 +372,7 @@ class EdgeEnv(gym.Env):
 
                 self.state.append(agent_state)
         else:  # not the last step of the episode
-            done.append(False)
+            done = np.full((self.n_nodes,), False)
             # const = np.array([1])
             task_info = self.df_tasks_normalised.iloc[
                 self.current_task_id].to_numpy()
@@ -402,7 +402,7 @@ class EdgeEnv(gym.Env):
 
         # update the total social welfare
         self.total_social_welfare += sw_increase
-        # info part is None for now
+        # info part is (the social welfare increase in this step) for now
         return self.state, self.rewards, done, sw_increase
 
     def render(self):

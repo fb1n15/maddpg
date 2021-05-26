@@ -119,10 +119,14 @@ def train(arglist):
             l_c = 2
             n_c = 2.5
             h_c = 3
-            avg_resource_capacity = {0: [h_r, h_r, h_r]}
-            avg_unit_cost = {0: [l_c, l_c, l_c]}
+            # node 0: high capacity and low unit cost
+            # node 1: low capacity and high unit cost
+            avg_resource_capacity = {0: [h_r, h_r, h_r],
+                1: [l_r, l_r, l_r]}
+            avg_unit_cost = {0: [l_c, l_c, l_c],
+                1: [h_c, h_c, h_c]}
 
-            env = EdgeEnv(avg_resource_capacity, avg_unit_cost, n_nodes=1,
+            env = EdgeEnv(avg_resource_capacity, avg_unit_cost, n_nodes=2,
                 n_timesteps=10, n_tasks=500, max_steps=MAX_STEPS,
                 n_actions=2, p_high_value_tasks=0.2)
 
@@ -181,6 +185,12 @@ def train(arglist):
             done = all(done_n)
             terminal = (episode_step >= arglist.max_episode_len)
             # collect experience
+
+            # print(f"obs_n = {obs_n}")
+            # print(f"action_n = {action_n}")
+            # print(f"rew_n = {rew_n}")
+            # print(f"done_n = {done_n}")
+
             for i, agent in enumerate(trainers):
                 agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i],
                     done_n[i], terminal)
