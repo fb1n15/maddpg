@@ -148,6 +148,7 @@ class EdgeEnv(gym.Env):
         # generate new tasks for next episode
         (df_tasks, df_nodes, n_time, n_tasks,
         n_nodes) = self.data_for_next_episode()
+        # print(df_tasks.head())
         self.df_tasks = df_tasks
         self.df_nodes = df_nodes
         self.current_task = df_tasks.iloc[0]
@@ -260,13 +261,14 @@ class EdgeEnv(gym.Env):
                 self.df_tasks.loc[
                     self.current_task_id, 'arrive_time'] + relative_start_time + 1)
             # action is in {1,2,...,9,10}
-            bids_list.append(action * self.df_tasks.loc[
+            bids_list.append(action / (self.n_actions -1) * self.df_tasks.loc[
                 self.current_task_id, 'valuation_coefficient'])
             max_usage_time_list.append(max_usage_time)
             start_time_list.append(start_time)
             relative_start_time_list.append(relative_start_time)
 
         if self.verbose:
+            print(f"Valuation coeff = {self.df_tasks.loc[self.current_task_id, 'valuation_coefficient']}")
             print("bid prices:")
             print(bids_list)
             print("max usage times:")

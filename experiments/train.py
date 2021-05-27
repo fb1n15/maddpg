@@ -122,15 +122,19 @@ def train(arglist):
             # node 0: high capacity and low unit cost
             # node 1: low capacity and high unit cost
             avg_resource_capacity = {0: [h_r, h_r, h_r],
-                1: [l_r, l_r, l_r]}
+                1: [h_r, h_r, h_r], 2: [l_r, l_r, l_r],
+                3: [l_r, l_r, l_r], 4: [l_r, l_r, l_r], 5: [l_r, l_r, l_r]}
             avg_unit_cost = {0: [l_c, l_c, l_c],
-                1: [h_c, h_c, h_c]}
+                1: [n_c, n_c, n_c], 2: [n_c, n_c, n_c],
+                3: [h_c, h_c, h_c], 4: [h_c, h_c, h_c], 5: [h_c, h_c, h_c]}
 
-            env = EdgeEnv(avg_resource_capacity, avg_unit_cost, n_nodes=2,
+            env = EdgeEnv(avg_resource_capacity, avg_unit_cost, n_nodes=6,
                 n_timesteps=10, n_tasks=500, max_steps=MAX_STEPS,
-                n_actions=2, p_high_value_tasks=0.2)
+                n_actions=5, p_high_value_tasks=0.2)
 
-            env.verbose = False
+            # set the unit valuation ratio between HVTs and LVTs
+            env.valuation_ratio = 4
+            env.verbose = False  # do not print the details of the env.
 
         # Create agent trainers
         obs_shape_n = [env.observation_space[i].shape for i in range(env.n)]
